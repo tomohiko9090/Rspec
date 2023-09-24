@@ -1,5 +1,6 @@
 # Rspec
-テストコードは「DRYさ」よりも「読みやすさ」！
+- テストコードは「DRYさ」よりも「読みやすさ」！
+- 中身のないitを書いて、テストはあとで書こう
 
 ## 「実行コマンド」に関するTips
 実行コマンド
@@ -26,3 +27,26 @@ config.profile_examples = 10
 config.profile_examples = false
 ```
 にすれば、出力されなくなるが、業務で出力して確かめるのも大事かも？
+
+## 「Rspecのメソッド」に関するTips
+### テストの構造を決める系
+- describe 〜の検証
+- context 〜の場合
+- it 〜こと（このブロックで定義されたテスト内容をexampleと呼んだりする）  
+  - 中身の無い it。doのブロックなしにすると、Pendingになる。
+  - example と specifyは、it のエイリアス。自然な英文を作るためなので、日本語なら使わなくて良さそう。
+  - let(:foo) { ... } のように書くと、 { ... } の中の値が foo として参照できるが、ハッシュを定義すると、let(:params) { { name: 'たろう' } }　みたいになるからわかり辛い
+
+### 先に定義しちゃう系
+- before そのブロックで使いたい定義
+- let 遅延評価の特徴があることから、expectで出てくる定義を上に上に読んでいける
+- let!は、事前に実行されるため、レコードがデータベースに保存されていないからエラーが起きるみたいなことが発生しない
+- subject テストするオブジェクトやメソッドが決まっているとき、あらかじめ定義する。is_expectedを使うと、subjectが実行されたとして、テスト実施される
+
+### あんま使わないけど覚えてはおこう系
+- shared_examples、it_behaves_likeは、itでテストする内容を再利用できるもの。
+- shared_context と include_contextは、context内のbeforeやletで定義を再利用して使える。shared_contextで定義して、include_contextで使う。include_contextは、context内のbeforeやletで定義を再利用して使える。shared_contextで定義して、include_contextの""の内容が一緒だと呼び出される
+- pending（保留） は、実行を中断するのではなく、そのまま実行を続けることができる　← あんま使わん
+- skipは、それ以降実行を止めることができる　　← あんま使わん
+- xitは、ブロック丸ごと実行しない
+- xdescribe / xcontextは、グループ全体をまとめてskipさせる
