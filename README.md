@@ -1,12 +1,12 @@
 # Rspec
 
 ## 「実行コマンド」に関するTips
-- 実行コマンド
+実行コマンド
 ```
 rspec spec/test_spec.rb
 ```
 
-- テスト構造を把握するコマンド
+テスト構造を把握するコマンド
 ```
 rspec spec/test_spec.rb --dry-run --order defined
 ```
