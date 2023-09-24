@@ -1,7 +1,15 @@
 # Rspec
 
 ## 「実行コマンド」に関するTips
+- 実行コマンド
+```
+rspec spec/test_spec.rb
+```
 
+- テスト構造を把握するコマンド
+```
+rspec spec/test_spec.rb --dry-run --order defined
+```
 
 ## 「設定」に関するTips
 RSpecの設定は、spec_helper.rbやrails_helper.rbの中で行われ、
