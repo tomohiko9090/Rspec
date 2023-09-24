@@ -4,6 +4,7 @@
 実行コマンド
 ```
 rspec spec/test_spec.rb
+rspec spec/test_spec.rb --color --format d # 色付き
 ```
 
 テスト構造を把握するコマンド
