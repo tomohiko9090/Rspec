@@ -4,7 +4,8 @@
 実行コマンド
 ```
 rspec spec/test_spec.rb
-rspec spec/test_spec.rb --color --format d # 色付き
+rspec spec/test_spec.rb --color --format d # 加えて色付けたい時
+rspec spec/test_spec.rb --color --format d --order defined # 加えて順番変えたくない時
 ```
 
 テスト構造を把握するコマンド
