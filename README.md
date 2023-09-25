@@ -47,7 +47,7 @@ config.profile_examples = false
   - 業務では、subjectをメソッドや変数のように使い回さず、is_expectedを使うようにする
 
 #### あんま使わないけど覚えてはおこう系
-- shared_examples、it_behaves_likeは、itでテストする内容を再利用できるもの。<span style="color: red; ">定義元だどる必要があるので、業務では禁止</span>
+- shared_examples、it_behaves_likeは、itでテストする内容を再利用できるもの。<font color="red">定義元だどる必要があるので、業務では禁止</font>
 - shared_context と include_contextは、context内のbeforeやletで定義を再利用して使える。shared_contextで定義して、include_contextで使う。include_contextは、context内のbeforeやletで定義を再利用して使える。shared_contextで定義して、include_contextの""の内容が一緒だと呼び出される。<span style="color: red; ">定義元だどる必要があるので、業務では禁止</span>
 - pending（保留） は、実行を中断するのではなく、そのまま実行を続けることができる　← あんま使わん
 - skipは、それ以降実行を止めることができる　　← あんま使わん
