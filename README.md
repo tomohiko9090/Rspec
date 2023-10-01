@@ -75,7 +75,7 @@ expect(user.save).to be_truthy # saveできないことを検証
 「trueっぽい値」または「falseっぽい値」なので、どちらもパスする
 ```
 expect(1).to be_truthy # 判定した結果がtrueだから
-expect(nil).to be_falsey # 
+expect(nil).to be_falsey
 ```
 <br>
 どちらも失敗する
