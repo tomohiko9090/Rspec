@@ -184,6 +184,10 @@ RSpec.describe User do
       expect(probability).to be_within(1.0).of(25.0) # ゆらぎ1％は許容する
     end
   end
+
+  describe 'その3についての検証' do
+    
+  end
 end
 
 
