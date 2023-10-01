@@ -93,43 +93,7 @@ RSpec.describe User do
     end
   end
 
-  describe '6. その2についての検証' do
-    # まな美に学習する内容をノートに投稿
-    # 原付で理科大の図書館行く、筋トレ
-    # やることを書き出す
-
-    # マッチャ（matcher）は「期待値と実際の値を比較して、一致した（もしくは一致しなかった）という結果を返すオブジェクト
-    # eq や include がマッチャ。toはマッチャではない
-
-    # eq は、　=
-    # be は、比較のマッチャ
-
-    # be_xxx (predicateマッチャ)という。=述語的マッチャ
-    # be_emptyは、空かどうか
-    # be_validは、バリデーションにかかるかどうか
-    # be_truthyとbe_falseyは、true / falseを返すかのテストで使う
-    # expect(user.save).to be_falsey　できるか。
-    # expect(user.save).to be_truthy できないこと
-    # 「trueっぽい値」または「falseっぽい値」一方で、
-
-    # どちらもパスする
-    # expect(1).to be_truthy # 判定した結果がtrueだから
-    # expect(nil).to be_falsey # 
-
-    # どちらも失敗する
-    # expect(1).to be true # 1 = trueではないから失敗
-    # expect(nil).to be false
-
-    # be の代わりに eq を使った場合も同様に失敗する
-    # expect(1).to eq true
-    # expect(nil).to eq false
-
-    # changeマッチャは内容が変更されることを意味する
-      # from/to で何から何に変化したのか
-      # by で変化の数を書く
-    # include で含まれているか。ex.expect(x).to include 1, 3
-    # raise_error はエラーが正しく起こるかどうかを確認するもの。異常系のテストとかで使えそう。
-
+  describe 'その2についての検証' do
     it "1 + 2の結果が正しいこと" do
       expect(1 + 2).to eq 3
       expect(1 + 2).not_to eq 1 # to_notでも良い。
@@ -196,6 +160,28 @@ RSpec.describe User do
 
     it "エラーが起こること" do
       expect{ 1 / 0 }.to raise_error ZeroDivisionError
+    end
+
+    it '当選確率が約25%になっていること' do
+      class Lottery
+        KUJI = %w(あたり はずれ はずれ はずれ)
+
+        def initialize
+          @result = KUJI.sample # 無作為に抽出できるメソッド
+        end
+        def win?
+          @result == 'あたり'
+        end
+        def self.generate_results(count)
+          Array.new(count){ self.new }
+        end
+      end
+
+      results = Lottery.generate_results(10000) # 10000回
+      win_count = results.count(&:win?) # win?でtureになった数をカウント
+      probability = win_count.to_f / 10000 * 100
+
+      expect(probability).to be_within(1.0).of(25.0) # ゆらぎ1％は許容する
     end
   end
 end
