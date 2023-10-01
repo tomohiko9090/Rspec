@@ -61,7 +61,7 @@ config.profile_examples = false
 eq や includeをマッチャという。toはマッチャではない。  
 <br>
 以下マッチャ一覧
-- eq は、イコール
+- eq はイコール
 - be は、等号・不等号と組み合わせて、値の大小を検証するときによく使われるマッチャ
 - be_xxx (predicateマッチャ=述語的マッチャ)という。
 - be_empty は、空かどうか
