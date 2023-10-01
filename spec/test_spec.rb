@@ -125,8 +125,10 @@ RSpec.describe User do
     # expect(nil).to eq false
 
     # changeマッチャは内容が変更されることを意味する
-    # from/to で変化の値
-    # by で
+      # from/to で何から何に変化したのか
+      # by で変化の数を書く
+    # include で含まれているか。ex.expect(x).to include 1, 3
+    # raise_error はエラーが正しく起こるかどうかを確認するもの。異常系のテストとかで使えそう。
 
     it "1 + 2の結果が正しいこと" do
       expect(1 + 2).to eq 3
@@ -188,7 +190,12 @@ RSpec.describe User do
     end
 
     it "includeで配列の中に特定の値が入っていること" do
-      expect([1, 2, 3]).to include 2
+      expect(x).to include 1 # 1が含まれていることを検証する
+      expect(x).to include 1, 3 # 1と3が含まれていることを検証する
+    end
+
+    it "エラーが起こること" do
+      expect{ 1 / 0 }.to raise_error ZeroDivisionError
     end
   end
 end
