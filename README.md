@@ -71,7 +71,7 @@ eq や includeをマッチャという。toはマッチャではない。
 expect(user.save).to be_falsey　# saveできることを検証
 expect(user.save).to be_truthy # saveできないことを検証
 ```
-<br>
+
 「trueっぽい値」または「falseっぽい値」なので、どちらもパスする
 ```
 expect(1).to be_truthy # 判定した結果がtrueだから
