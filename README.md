@@ -71,22 +71,25 @@ eq や includeをマッチャという。toはマッチャではない。
 expect(user.save).to be_falsey　# saveできることを検証
 expect(user.save).to be_truthy # saveできないことを検証
 ```
-
+<br>
 「trueっぽい値」または「falseっぽい値」なので、どちらもパスする
 ```
 expect(1).to be_truthy # 判定した結果がtrueだから
 expect(nil).to be_falsey # 
 ```
+<br>
 どちらも失敗する
 ```
 expect(1).to be true # 1 = trueではないから失敗
 expect(nil).to be false
 ```
+<br>
 be の代わりに eq を使った場合も同様に失敗する
 ```
 expect(1).to eq true
 expect(nil).to eq false
 ```
+<br>
 - change は内容が変更されることを意味する
   - from/to で何から何に変化したのかかく
   - by で変化した数をかく
@@ -94,5 +97,6 @@ expect(nil).to eq false
 ```
 expect(x).to include 1, 3
 ```
+<br>
 - raise_error は、エラーが正しく起こるかどうかを確認するもの。異常系のテストとかで使えそう。
 - be_within は、be_within(1.0).of(25.0)で25から±1を許容しているかテストするもの
