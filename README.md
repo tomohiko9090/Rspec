@@ -243,20 +243,12 @@ A.
 ```
 bin/rails g factory_bot:model user
 ```
-ちなみに
+ちなみにrspecを生成するときは以下のコマンド
 ```
 bin/rails g rspec:model user
 ```
 
 #### Q. どこにファイルがあるの？  
-
-#### Q.factorybotを生成できるようにするには？
-```spec/rails_helper.rb
-RSpec.configure do |config|
-  config.include FactoryBot::Syntax::Methods
-end
-```
-
 A. test/factoriesディレクトリ直下にある。  
 例)  
 `test/factories/users.rb`  
@@ -264,6 +256,15 @@ specとは別の場所にあることに注意。
 ちなみに、  
 `spec/models/user_spec.rb`
 <br>
+
+#### Q.specを使う際にfactorybotが動かないどうして？
+A.以下の設定多分してないからしてください。
+spec/rails_helper.rb
+```
+RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
+end
+```
 
 #### Q. どんなふうに定義されてるの？  
 A. 以下のように定義されています。
