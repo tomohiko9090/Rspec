@@ -238,25 +238,64 @@ end
 
 
 ### Factorybot編
-Q. あるmodelのFactorybotのファイルを作成するコマンドは？
+#### Q. あるmodelのFactorybotのファイルを作成するコマンドは？  
 A. 
 ```
 bin/rails g factory_bot:model user
 ```
+ちなみに
+```
+bin/rails g rspec:model user
+```
 
-Q. どこにファイルがあるの？
+#### Q. どこにファイルがあるの？  
 
-Q. どんなふうに定義されてるの？
+#### Q.factorybotを生成できるようにするには？
+```spec/rails_helper.rb
+RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
+end
+```
 
-Q. アソシエーションがあるとどうなるの？
+A. test/factoriesディレクトリ直下にある。  
+例)  
+`test/factories/users.rb`  
+specとは別の場所にあることに注意。    
+ちなみに、  
+`spec/models/user_spec.rb`
+<br>
 
-Q. traitって何？
+#### Q. どんなふうに定義されてるの？  
+A. 以下のように定義されています。
+```
+```
+<br>
 
-Q. createの引数は何を意味してるの？
+#### Q. アソシエーションがあるとどうなるの？  
+A. 
+<br>
 
-Q. buildとcreateの違いは？
+#### Q. traitって何？
+A. 
+<br>
 
-Q. factory bot と factory girl の違いは？
+#### Q. transientって何？
+
+#### Q. sequenceって何？
+
+#### Q. afterって何？
+
+
+#### Q. createの引数は何を意味してるの？
+A. 
+<br>
+
+#### Q. buildとcreateの違いは？
+A. 
+<br>
+
+#### Q. factory bot と factory girl の違いは？
+A. 
 
 
 
