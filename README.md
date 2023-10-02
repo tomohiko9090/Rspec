@@ -238,6 +238,14 @@ end
 
 
 ### Factorybot編
+#### Q. 導入方法は？
+Gemfile
+```Gemfile
+group :development, :test do
+  gem "rspec-rails", "~> 3.6.0"
+  gem "factory_bot_rails", "~> 4.10.0" # このグループの他の gem が並ぶ ...
+end
+```
 #### Q. あるmodelのFactorybotのファイルを作成するコマンドは？  
 A. 
 ```
@@ -258,7 +266,7 @@ specとは別の場所にあることに注意。
 <br>
 
 #### Q.specを使う際にfactorybotが動かないどうして？
-A.以下の設定多分してないからしてください。
+A.以下の設定多分してないと思われる。  
 spec/rails_helper.rb
 ```rails_helper.rb
 RSpec.configure do |config|
@@ -267,7 +275,7 @@ end
 ```
 
 #### Q. どんなふうに定義されてるの？  
-A. 以下のように定義されています。
+A. 以下のように定義されています。  
 test/factories/tasks.rb
 ```tasks.rb
 FactoryBot.define do
@@ -280,37 +288,106 @@ FactoryBot.define do
   end
 end
 ```
-<br>
+
+#### factoryはどうしたら使えるの？
+以下のようにcreateを行うと使える。
+spec/models/task_rspec.rb
+```spec/models/task_rspec.rb
+let!(:task3){ create(:task) }
+```
+
+#### Q. createの引数は何を意味してるの？
+A. create(factory)
+
+#### Q. create_listは何？
+A. まとめてインスタンスを作成することができる  
+5つのnoteインスタンスを作成しようと思ったら、以下のように書く
+```
+RSpec.describe 'yyyy' do
+  notes = create_list(:note, 5)
+end
+```
 
 #### Q. aliasesがあるとどうなるの？
 A. 異なる名前で同じファクトリを呼び出すことができる。コードの読みにくくなるから、作り過ぎには注意。
 
 #### Q. アソシエーションがあるとどうなるの？  
 A. modelにアソシエーションが定義されている場合に限り使うことができる  
-上のtaskで生成した際に、同時に生成することが可能。
+上でtaskを生成した際に、同時に紐づくuser生成することができる。　　
+  
+この時のuserの定義は以下。  
+test/factories/users.rb
+```test/factories/users.rb
+FactoryBot.define do
+  factory :user do
+    id { 1 }
+    password { "test2" }
+    sequence(:name) { |n| "未来のワクワクさん#{n}号機" }
+    sequence(:email) { |n| "tomo.k8080#{n}@gmail.com" }
+  end
+end
+```
 <br>
-
-#### Q. traitって何？
-A. 
-<br>
-
-#### Q. transientって何？
 
 #### Q. sequenceって何？
+A.createで作成する場合は、ユニーク制約に引っかかる場合があるので、メールアドレスなどはnでカウントしてユニークになるようにする
+
+#### Q. traitって何？
+A. 重複させないようにするメソッド。
+
+factoryをネストすることでも実現可能。
+```
+  factory :project
+      factory :project_due_yesterday
+      factory :project_due_today
+      factory :project_due_tomorrow
+```
+<br>
+
 
 #### Q. afterって何？
 
 
-#### Q. createの引数は何を意味してるの？
-A. 
-<br>
+#### Q. transientって何？
+transientは、基本afterと一緒にセットで使う。  
+属性以外のパラメータを持たせることができるので、  
+afterで、createメソッドを使ってインスタンス化する時に変数として埋め込むことができる。　　
+以下の例では、articles_countを0と定義しておいて、その変数を後で定義できるようにしている。
+```user.rb
+FactoryBot.define do
+  factory :user do
+    name { "John Doe" }
+
+    transient do
+      articles_count { 0 }
+    end
+
+    after(:create) do |user, evaluator|
+      create_list(:article, evaluator.articles_count, user: user)
+    end
+  end
+end
+
+# 使用例:
+# 3つの記事を持つユーザーを作成する
+create(:user, articles_count: 3)
+```
+
 
 #### Q. buildとcreateの違いは？
-A. 
-<br>
+A.   
+##### build
+- メモリ上にインスタンスを確保する。
+- DB上にはデータがないので、DBにアクセスする必要があるテストのときは使えない。
+- DBにアクセスする必要がないテストの時には、インスタンスを確保する時にDBにアクセスする必要がないので処理が比較的軽くなる。
+
+##### create
+- DB上にインスタンスを永続化する。
+- DB上にデータを作成する。
+- DBにアクセスする処理のときは必須。（何かの処理の後、DBの値が変更されたのを確認する際は必要）
 
 #### Q. factory bot と factory girl の違いは？
-A. 
+A. 2008年に"Factory Girl"という名前でリリース。2017年10月に"Factory bot"に改名。
 
 
 
