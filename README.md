@@ -24,7 +24,7 @@ rspec spec/test_spec.rb --dry-run --order defined
 ## 「設定」に関するTips
 RSpecの設定は、spec_helper.rbやrails_helper.rbの中で行われ、
 テストの上位10個の遅いテストを表示する設定が
-```
+```rbやrails_helper.rb
 config.profile_examples = 10
 ```
 でされている。
@@ -72,25 +72,25 @@ eq や includeをマッチャという。toはマッチャではない。
 - be_empty は、空かどうか
 - be_valid は、バリデーションにかかるかどうか
 - be_truthy と be_falsey は、true / falseを返すかのテストで使う
-```
+```test_spec.rb
 expect(user.save).to be_falsey　# saveできることを検証
 expect(user.save).to be_truthy # saveできないことを検証
 ```
   
 「trueっぽい値」または「falseっぽい値」なので、どちらもパスする
-```
+```test_spec.rb
 expect(1).to be_truthy # 判定した結果がtrueだから
 expect(nil).to be_falsey
 ```
   
 どちらも失敗する
-```
+```test_spec.rb
 expect(1).to be true # 1 = trueではないから失敗
 expect(nil).to be false
 ```
   
 be の代わりに eq を使った場合も同様に失敗する
-```
+```test_spec.rb
 expect(1).to eq true
 expect(nil).to eq false
 ```
@@ -99,7 +99,7 @@ expect(nil).to eq false
   - from/to で何から何に変化したのかかく
   - by で変化した数をかく
 - include は含まれているか。
-```
+```test_spec.rb
 expect(x).to include 1, 3
 ```
   
@@ -116,19 +116,19 @@ allow A to receive B" で、「A が B を受け取ることを許可する」
 
 #### expect 必ず使うこと
 expect 使うとそのメソッドが呼び出されないとテスト失敗になる
-```
+```test_spec.rb
 expect(twitter_client_mock).to receive(:update)
 ```
 
 #### .and_raise エラーが起きたとする
 .and_raise は、updateのような受け取る予定のメソッドが呼び出された時に、わざとエラーを発生させるメソッド。
-```
+```test_spec.rb
 allow(twitter_client_mock).to receive(:update).and_raise('エラーが発生しました')
 ```
 
 #### .once / .twice / exactly(n).times 呼び出された数の検証
 .once を付けると「1回だけ呼び出すこと」を検証できる。呼び出された数がテストされる
-```
+```test_spec.rb
 expect(weather_bot).to receive(:notify).once # 2回以上呼び出されるとエラーに
 expect(weather_bot).to receive(:notify).twice # 2回までエラーにならない
 expect(weather_bot).to receive(:notify).exactly(n).times # n回までにエラーにならない
@@ -136,7 +136,7 @@ expect(weather_bot).to receive(:notify).exactly(n).times # n回までにエラ�
 
 #### .with 引数の中身を検証
 .with は、 with(検証したい引数の内容) の形で引数の中身を検証できる
-```
+```test_spec.rb
 expect(twitter_client_mock).to receive(:update).with('今日は晴れです')
 expect(twitter_client_mock).to receive(:update).with('今日は晴れです').once # 引数は '今日は晴れです' かつ、呼び出される回数は1回だけであることを検証
 
@@ -149,7 +149,7 @@ expect(user).to receive(:save_profile).with(hash_including(name: 'Alice')) # 特
     
 #### allow_any_instance_of 全てのインスタンスをモック化（非推奨）
 allow_any_instance_of メソッドを使うと、対象クラスの全インスタンスに対して目的のメソッドをモック化（基本使わない方がいい。しかし現状246件業務では使われている）
-```
+```test_spec.rb
 allow_any_instance_of(WeatherBot).to receive(:twitter_client).and_return(twitter_client_mock)
 ```
 使わない方がいい理由
@@ -159,31 +159,31 @@ allow_any_instance_of(WeatherBot).to receive(:twitter_client).and_return(twitter
 
 #### as_null_object 作成したモックに対してなんのメソッドでもallowしたことになる
 as_null_object というメソッドを付けると、作成したモックにどんなメソッドが呼んでも許容する（業務では使われてなかった）
-```
+```test_spec.rb
 twitter_client_mock = double('Twitter client').as_null_object
 ```
 
 #### receive_message_chain 2つモックにする必要のある処理をまとめてモックにする
 receive_message_chain メソッドを使うと、2つの処理をモック化できる（業務では124件ヒット）　　
 リターンするものがモックになっている場合は、receive_message_chainのお出まし。
-```
+```test_spec.rb
 allow(twitter_client_mock).to receive(:search).and_return([status_mock]) のように、モックがモックを返す時に、使える
 ```
 **注意**  
 receive_message_chain を使っているということは、「デメテルの法則」（結合度が高い）に違反したクラス設計になっている可能性がある
 
 ##### 例1 「検索実行」と「本文の返却」という2つの処理をモック化すると、
-```
+```test_spec.rb
 allow(weather_bot).to receive_message_chain('twitter_client.search.first.text').and_return('西脇市の天気は曇りです')
 ```
 
 ##### 例2 「インスタンスを作る」と「flagを作成する」の処理をモック化すると、
-```
+```test_spec.rb
 allow(FeatureFlags).to receive_message_chain(:create_instance, :get_flag).with(引数).and_return(Flag.new(引数, true, { "company_ids" => [company.id] }))
 ```    
 
 ##### 例3 「newメソッド」と「getCountメソッド」の処理をモック化すると、
-```
+```test_spec.rb
 describe "作成したクラスで検証" do
   class A
     def doSomething
@@ -260,7 +260,7 @@ specとは別の場所にあることに注意。
 #### Q.specを使う際にfactorybotが動かないどうして？
 A.以下の設定多分してないからしてください。
 spec/rails_helper.rb
-```
+```rails_helper.rb
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
 end
@@ -268,12 +268,26 @@ end
 
 #### Q. どんなふうに定義されてるの？  
 A. 以下のように定義されています。
-```
+test/factories/tasks.rb
+```tasks.rb
+FactoryBot.define do
+  factory :task, aliases: [:task1, :task2] do
+    association :user
+    estimated_time { 50 }
+    actual_time { 50 }
+    task_name { "リファクタリング" }
+    status { 0 }
+  end
+end
 ```
 <br>
 
+#### Q. aliasesがあるとどうなるの？
+A. 異なる名前で同じファクトリを呼び出すことができる。コードの読みにくくなるから、作り過ぎには注意。
+
 #### Q. アソシエーションがあるとどうなるの？  
-A. 
+A. modelにアソシエーションが定義されている場合に限り使うことができる  
+上のtaskで生成した際に、同時に生成することが可能。
 <br>
 
 #### Q. traitって何？
