@@ -309,7 +309,7 @@ ex.create(:user, :admin)
 #### Q. create_listは何？
 A. まとめてインスタンスを作成することができる  
 5つのnoteインスタンスを作成しようと思ったら、以下のように書く
-```
+```test.rb
 RSpec.describe 'yyyy' do
   notes = create_list(:note, 5)
 end
