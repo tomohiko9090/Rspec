@@ -297,7 +297,14 @@ let!(:task3){ create(:task) }
 ```
 
 #### Q. createの引数は何を意味してるの？
-A. create(factory)
+A. 主にパターンがある。　　
+```test.rb
+# 属性のオーバーライド -> create(ファクトリ名, 作成したい属性キー: 作成したい値)
+create(:user, username: "specificuser", email: "specific@example.com")
+
+# traits -> create(ファクトリ名, traitsで定義した名前) # 
+ex.create(:user, :admin)
+```
 
 #### Q. create_listは何？
 A. まとめてインスタンスを作成することができる  
@@ -345,8 +352,11 @@ factoryをネストすることでも実現可能。
 <br>
 
 
-#### Q. afterって何？
-
+#### Q. after(:create)って何？
+ファクトリを使用してオブジェクトが生成、構築、または保存された後に実行される。  
+なぜこの機能があるのかは未だ不明。
+- before(:create)	ファクトリがDBに保存される前
+- after(:create)	ファクトリがDBに保存された後
 
 #### Q. transientって何？
 transientは、基本afterと一緒にセットで使う。  
