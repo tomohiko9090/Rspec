@@ -232,7 +232,8 @@ end
 
 フィーチャスペック（feature spec）はユーザーの視点からブラウザ上の操作をシミュレートして、実行結果を検証するテスト 
 一般的には、「統合テスト」や「エンドツーエンドテスト（E2Eテスト）」と呼ばれている
-![image](https://github.com/tomohiko9090/Rspec/assets/66200485/82e37c15-3459-412b-a9df-5db2696b7430)
+![image](https://github.com/tomohiko9090/Rspec/assets/66200485/27c3e1ad-5b82-4ab6-845f-91a5dac81377)
+
 ![image](https://github.com/tomohiko9090/Rspec/assets/66200485/497c5819-4267-4cd6-b6c1-8e17fd0c5d45)
 
 
