@@ -237,3 +237,26 @@ end
 ![image](https://github.com/tomohiko9090/Rspec/assets/66200485/497c5819-4267-4cd6-b6c1-8e17fd0c5d45)
 
 
+### Factorybot編
+Q. あるmodelのFactorybotのファイルを作成するコマンドは？
+A. 
+```
+bin/rails g factory_bot:model user
+```
+
+Q. どこにファイルがあるの？
+
+Q. どんなふうに定義されてるの？
+
+Q. アソシエーションがあるとどうなるの？
+
+Q. traitって何？
+
+Q. createの引数は何を意味してるの？
+
+Q. buildとcreateの違いは？
+
+Q. factory bot と factory girl の違いは？
+
+
+
