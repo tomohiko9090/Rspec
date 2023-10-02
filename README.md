@@ -102,3 +102,56 @@ expect(x).to include 1, 3
 - be_within は、be_within(1.0).of(25.0)で25から±1を許容しているかテストするもの
 
 #### モック編
+    # エラー処理（異常系）こそテストが大事
+    # エラーをわざと発生させること自体が難しい場合、エラー処理をテストしないままリリース
+    # → エラー処理に不具合があると、顧客影響へ。
+    # エラーを出すことが難しい場合 → モックを使う
+
+    # モックが使いやすい設計にしましょう
+
+    # モックは、テストしてもいいようにプログラムを変更するもの
+    # ex.テスト中に呼び出すメソッドやインスタンスによって、SNSに投稿するのような実行してほしくない場合に、代わりに実行したことにするもの
+
+    # allowメソッド は、allow(モックオブジェクト).to receive(メソッド名)
+    # "allow A to receive B" で、「A が B を受け取ることを許可する」
+
+    # expectメソッド は、expect(twitter_client_mock).to receive(:update)
+    # expect を使うと「そのメソッドが呼び出されないとテスト失敗
+
+    # .and_raise は、updateのような受け取る予定のメソッドが呼び出された時に、わざとエラーを発生させるメソッド
+    # allow(twitter_client_mock).to receive(:update).and_raise('エラーが発生しました')
+
+    # .once を付けると「1回だけ呼び出すこと」を検証できる。呼び出された数がテストされる
+    # 2回以上呼び出されるとエラーに
+    # expect(weather_bot).to receive(:notify).once
+    # twice　で2回
+    # exactly(n).times でn回呼び出す
+
+    # .with は、 with(検証したい引数の内容) の形で引数の中身を検証、できる
+    # expect(twitter_client_mock).to receive(:update).with('今日は晴れです')
+    # 引数は '今日は晴れです' かつ、呼び出される回数は1回だけであることを検証
+    # expect(twitter_client_mock).to receive(:update).with('今日は晴れです').once
+    # 2つの引数を検証することも可能
+    # expect(user).to receive(:save_profile).with('Alice', 'alice@example.com')
+    # とりあえず何かしら渡ってきてほしいことを確認
+    # expect(user).to receive(:save_profile).with('Alice', anything)
+    # ハッシュで確認することも可能（特定のkeyとvalueだけに着目する場合は hash_including を使う）
+    # expect(user).to receive(:save_profile).with(name: 'Alice', email: 'alice@example.com')
+
+    # allow_any_instance_of メソッドを使うと、対象クラスの全インスタンスに対して目的のメソッドをモック化（基本使わない方がいい→でも業務では使われている）（246件ヒット）
+    # allow_any_instance_of(WeatherBot).to receive(:twitter_client).and_return(twitter_client_mock)
+    # 1.理解しづらいテストコードになる
+    # 2.必要ということは設計自体がイケてない可能性がある
+    # 3.allow_any_instance_ofの中身は複雑な実装になっていて不具合起きる
+
+    # receive_message_chain メソッドを使うと、2つの処理をモック化できる（業務では124件ヒット）
+    # 例えば、「検索実行」と「本文の返却」という2つの処理をモック化すると、
+    # allow(weather_bot).to receive_message_chain('twitter_client.search.first.text').and_return('西脇市の天気は曇りです')
+    # 「インスタンスを作る」と「flagを作成する」の処理をモック化すると、
+    # allow(FeatureFlags).to receive_message_chain(:create_instance, :get_flag).with(引数).and_return(Flag.new(引数, true, { "company_ids" => [company.id] }))
+    # allow(twitter_client_mock).to receive(:search).and_return([status_mock]) のように、モックがモックを返す時に、使える
+    # receive_message_chain を使っているということは、「デメテルの法則」（結合度が高い）に違反したクラス設計になっていることに注意
+
+    # as_null_object というメソッドを付けると、どんなメソッドが呼ばれても許容する（業務では使われてなかった）
+    # twitter_client_mock = double('Twitter client').as_null_object
+    # allow(twitter_client_mock).to receive(:update) は不要
