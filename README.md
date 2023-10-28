@@ -22,6 +22,8 @@ rspec spec/test_spec.rb --dry-run --order defined
 ```
 
 ## 「設定」に関するTips
+
+### 遅いテストを表示する
 RSpecの設定は、spec_helper.rbやrails_helper.rbの中で行われ、
 テストの上位10個の遅いテストを表示する設定が
 ```rbやrails_helper.rb
@@ -33,6 +35,16 @@ config.profile_examples = 10
 config.profile_examples = false
 ```
 にすれば、出力されなくなるが、業務で出力して確かめるのも大事かも？
+
+### テスト結果に色つけする
+spec_helper.rb
+```spec_helper.rb
+RSpec.configure do |config|
+  # その他の設定
+
+  config.color = true
+end
+```
 
 ## 「Rspecのメソッド」に関するTips
 ### テストの構造編
