@@ -19,6 +19,84 @@ RSpec.describe Test do
       end
     end
   end
+
+  describe "3. aroundの検証（beforeとafterの外でaroundを実行）" do
+    around(:example) do |example|
+      puts "aroundの前半"
+      # before
+      example.run
+      # after
+      puts "aroundの後半"
+    end
+
+    before(:example) do
+      puts "before句を実行"
+    end
+
+    after(:example) do
+      puts "after句を実行"
+    end
+
+    it "テスト①が実行されること" do
+      puts "---it句①発動!---"
+    end
+
+    it "テスト②が実行されること" do
+      puts "---it句②発動!---"
+    end
+  end
+
+  describe "4. aroundの検証（beforeとafterの中でaroundを実行）→ aroundが直前" do
+    around(:example) do |example|
+      puts "aroundの前半"
+      
+      example.run
+      
+      puts "aroundの後半"
+    end
+
+    before(:context) do
+      puts "before句を実行"
+    end
+
+    after(:context) do
+      puts "after句を実行"
+    end
+
+    it "テスト①が実行されること" do
+      puts "---it句①発動!---"
+    end
+
+    it "テスト②が実行されること" do
+      puts "---it句②発動!---"
+    end
+  end
+
+  describe "5. aroundの検証（beforeとafterの引数に何も渡さない場合）" do
+    around(:example) do |example|
+      puts "aroundの前半"
+      
+      example.run
+      
+      puts "aroundの後半"
+    end
+
+    before do
+      puts "before句を実行"
+    end
+
+    after do
+      puts "after句を実行"
+    end
+
+    it "テスト①が実行されること" do
+      puts "---it句①発動!---"
+    end
+
+    it "テスト②が実行されること" do
+      puts "---it句②発動!---"
+    end
+  end
 end
 
 RSpec.describe User do
@@ -186,7 +264,108 @@ RSpec.describe User do
   end
 
   describe 'その3についての検証' do
+    describe "ツイートの例を検証" do
+      it 'エラーなく予報をツイートすること（ツイートのテスト）' do
+        class WeatherBot
+          def tweet_forecast
+            twitter_client.update '今日は晴れです'
+          end
     
+          def twitter_client
+            Twitter::REST::Client.new
+            p "ツイートしちゃったけど、大丈夫そう？"
+          end
+        end
+  
+        # Twitter clientのモックを作り、updateメソッドが呼びだせるようにする
+        twitter_client_mock = double('Twitter client')
+        
+        expect(twitter_client_mock).to receive(:update) # updateメソッドが呼び出されないと、エラーになる
+        # allow(twitter_client_mock).to receive(:update) # 呼び出されようと、呼び出されまいと知らんぷり
+      
+        # twitter_clientメソッドが呼ばれたら、モックを返すように実装を書き換える
+        weather_bot = WeatherBot.new
+        allow(weather_bot).to receive(:twitter_client).and_return(twitter_client_mock)
+      
+        # エラーにならないことを検証
+        expect{ weather_bot.tweet_forecast }.not_to raise_error 
+      end
+  
+      it 'エラーが起きたら通知すること（エラーのテスト）' do
+        class WeatherBot
+          def tweet_forecast
+            p "ああああ"
+            twitter_client.update '今日は晴れです'
+          rescue => e
+            notify(e)
+          end
+    
+          def twitter_client
+            p "いいいい"
+            Twitter::REST::Client.new
+          end
+    
+          def notify(error)
+            p "うううう"
+            # （エラーの通知を行う。実装は省略）
+          end
+        end
+  
+        twitter_client_mock = double('Twitter client')
+        allow(twitter_client_mock).to receive(:update).and_raise('エラーが発生しました') # updateメソッドが呼ばれたらエラーを発生させる
+      
+        weather_bot = WeatherBot.new
+        allow(weather_bot).to receive(:twitter_client).and_return(twitter_client_mock)
+  
+        # notifyメソッドが呼ばれることを検証する（allowではなく、expectだから、notifyが呼ばれなかったらエラーになる）
+        expect(weather_bot).to receive(:notify)
+      
+        weather_bot.tweet_forecast # weather_botのnotifyメソッドが呼び出されたらテストはパスする 
+      end
+    end
+
+    describe "作成したクラスで検証" do
+      class A
+        def doSomething
+          b = B.new
+          b.getCount()
+        end
+      end
+      
+      class B
+        def getCount()
+          p "実行されちゃったよよよよよよよよよよよよよよよよよよ"
+          rand()
+        end
+      end
+      
+      context "モックを利用しない場合" do
+        it "getCountが呼び出される" do
+          a = A.new
+          expect(a.doSomething()).to eq 0 # これだとgetCount()が呼び出されてしまい、rand()の値が出力される
+        end
+      end
+
+      context "モックを利用した場合" do
+        it "getCountが呼び出される" do
+          mock_b = double(B)
+          allow(B).to receive(:new).and_return(mock_b) # B が newメソッド を受け取ることを許可し、mock_bを返す
+          allow(mock_b).to receive(:getCount).and_return(0) # mock_b が getCountメソッド を受け取ることを許可し、0を返す
+    
+          a = A.new
+          expect(a.doSomething()).to eq 0 # a.doSomething()で、B.newをしているので、b = mock_bとなる。b.getCount()では、b(mock_b).getCount()となり、0を返す。
+        end
+      end
+
+      context "receive_message_chainを利用した場合" do
+        it "getCountが呼び出される" do
+          allow(B).to receive_message_chain(:new, :getCount).and_return(0) # B.new.getCount をモック化し、0を返すようにする
+      
+          a = A.new
+          expect(a.doSomething()).to eq 0
+        end
+      end
+    end
   end
 end
 
