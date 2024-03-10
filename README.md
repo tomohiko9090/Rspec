@@ -82,6 +82,10 @@ eq や includeをマッチャという。toはマッチャではない。
 - be_xxx (predicateマッチャ=述語的マッチャ)という。
 - be_empty は、空かどうか
 - be_valid は、バリデーションにかかるかどうか
+```ruby
+user = User.new(name: 'Tom', email: 'tom@example.com')
+expect(user).to be_valid # user.valid? が true になればパスする
+```
 - be_truthy と be_falsey は、true / falseを返すかのテストで使う
 ```test_spec.rb
 expect(user.save).to be_falsey　# saveできることを検証
@@ -108,7 +112,9 @@ expect(nil).to eq false
   
 - change は内容が変更されることを意味する
   - from/to で何から何に変化したのかかく
+    - `expect{ x.pop }.to change{ x.size }.from(3).to(2)`
   - by で変化した数をかく
+    - `expect{ x.push(4) }.to change{ x.size }.by(1)`
 - include は含まれているか。
 ```test_spec.rb
 expect(x).to include 1, 3
