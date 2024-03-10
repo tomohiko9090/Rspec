@@ -131,12 +131,36 @@ expect(x).to include 1, 3
 allow(モックオブジェクト).to receive(メソッド名)
 allow A to receive B" で、「A が B を受け取ることを許可する」
 
+```ruby
+describe "ただの足し算でモックをつくって検証" do
+  class Calculator
+    def add(a, b)
+      a + b
+    end
+  end
+
+  describe '#add' do
+    it '3 + 5 = 8 であること（通常盤）' do
+      calculator = Calculator.new
+      expect(calculator.add(3, 5)).to eq(8)
+    end
+
+    it '3 + 5 = 8 であること（モック盤）' do
+      calculator = Calculator.new
+      allow(calculator).to receive(:add).and_return(8)
+      expect(calculator.add(30000, 50000)).to eq(8) # めっちゃ嘘だけどテストがパスする
+
+      expect(calculator).to have_received(:add).with(30000, 50000) # モックが呼び出されたかどうかを確認
+    end
+  end
+end
+```
+
 #### expect 必ず使うこと
 expect 使うとそのメソッドが呼び出されないとテスト失敗になる
 ```test_spec.rb
 expect(twitter_client_mock).to receive(:update)
 ```
-
 #### .and_raise エラーが起きたとする
 .and_raise は、updateのような受け取る予定のメソッドが呼び出された時に、わざとエラーを発生させるメソッド。
 ```test_spec.rb
