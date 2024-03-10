@@ -62,8 +62,7 @@ end
 - let 遅延評価の特徴があることから、expectで出てくる定義を上に上に読んでいける
 - let!は、事前に実行されるため、レコードがデータベースに保存されていないからエラーが起きるみたいなことが発生しない
 - subject テストするオブジェクトやメソッドが決まっているとき、あらかじめ定義する。is_expectedを使うと、subjectが実行されたとして、テスト実施される
-  - 業務では、subjectをメソッドや変数のように使い回さず、is_expectedを使うようにする
-
+  - **業務では、subjectをメソッドや変数のように使い回さず、is_expectedを使うようにする**
 ### あんま使わない編
 - shared_examples、it_behaves_likeは、itでテストする内容を再利用できるもの。**定義元だどる必要があるので、業務では禁止**
 - shared_context と include_contextは、context内のbeforeやletで定義を再利用して使える。shared_contextで定義して、include_contextで使う。include_contextは、context内のbeforeやletで定義を再利用して使える。shared_contextで定義して、include_contextの""の内容が一緒だと呼び出される。**定義元だどる必要があるので、業務では禁止**
