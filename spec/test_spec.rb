@@ -12,7 +12,7 @@ RSpec.describe Test do
     end
   end
 
-  describe "2.四則演算の検証" do 
+  describe "2.四則演算の検証" do
     context "足し算の場合" do
       it '1 + 1 は 2 になること' do
         expect(1 + 1).to eq 2 # 1+1が2と等しくなることを求める
@@ -49,9 +49,9 @@ RSpec.describe Test do
   describe "4. aroundの検証（beforeとafterの中でaroundを実行）→ aroundが直前" do
     around(:example) do |example|
       puts "aroundの前半"
-      
+
       example.run
-      
+
       puts "aroundの後半"
     end
 
@@ -75,9 +75,9 @@ RSpec.describe Test do
   describe "5. aroundの検証（beforeとafterの引数に何も渡さない場合）" do
     around(:example) do |example|
       puts "aroundの前半"
-      
+
       example.run
-      
+
       puts "aroundの後半"
     end
 
@@ -108,7 +108,8 @@ RSpec.describe User do
       context '12歳以下の場合' do
         let(:age) { 12 }
 
-        it 'ひらがなで答えること' do 
+        it 'ひらがなで答えること' do
+          binding.pry
           expect(user.greet).to eq 'ぼくはたろうだよ。'
         end
       end
@@ -147,23 +148,23 @@ RSpec.describe User do
 
     describe '5. ちょい特殊な検証' do
       it "中身の無い it"
-  
+
       it '1 + 1 は 2 になること' do
         expect(1 + 1).to eq 2 # 1+1が2と等しくなることを求める
-  
+
         pending 'pendingこの先はなぜかテストが失敗するのであとで直す'
         # パスしないエクスペクテーション（実行される）
         expect(foo).to eq bar
       end
-  
+
       it "「hello」が呼び出されること" do
         expect(Test.new.message).to eq "hello"
-  
+
         skip 'skipとりあえずここで実行を保留'
         # ここから先は実行されない
         expect(foo).to eq bar
       end
-  
+
       xit '実行したくないテスト' do
         expect(1 + 2).to eq 3
         expect(foo).to eq bar
@@ -181,7 +182,7 @@ RSpec.describe User do
     it "ちょっと特殊だけど、値が等しいこと" do
       message_1 = 'Hello'
       message_2 = 'Hello'
-    
+
       # expect([message_1].first).to be message # be は等号・不等号なしで書くと、シンボルが同じか判定。A.equal?(B)と同じ。.これは失敗する
       expect([message_1].first).to eq message_2 # これは通る。eqは、同値であれば成功する。
     end
@@ -270,27 +271,27 @@ RSpec.describe User do
           def tweet_forecast
             twitter_client.update '今日は晴れです'
           end
-    
+
           def twitter_client
             Twitter::REST::Client.new
             p "ツイートしちゃったけど、大丈夫そう？"
           end
         end
-  
+
         # Twitter clientのモックを作り、updateメソッドが呼びだせるようにする
         twitter_client_mock = double('Twitter client')
-        
+
         expect(twitter_client_mock).to receive(:update) # updateメソッドが呼び出されないと、エラーになる
         # allow(twitter_client_mock).to receive(:update) # 呼び出されようと、呼び出されまいと知らんぷり
-      
+
         # twitter_clientメソッドが呼ばれたら、モックを返すように実装を書き換える
         weather_bot = WeatherBot.new
         allow(weather_bot).to receive(:twitter_client).and_return(twitter_client_mock)
-      
+
         # エラーにならないことを検証
-        expect{ weather_bot.tweet_forecast }.not_to raise_error 
+        expect{ weather_bot.tweet_forecast }.not_to raise_error
       end
-  
+
       it 'エラーが起きたら通知すること（エラーのテスト）' do
         class WeatherBot
           def tweet_forecast
@@ -299,28 +300,28 @@ RSpec.describe User do
           rescue => e
             notify(e)
           end
-    
+
           def twitter_client
             p "いいいい"
             Twitter::REST::Client.new
           end
-    
+
           def notify(error)
             p "うううう"
             # （エラーの通知を行う。実装は省略）
           end
         end
-  
+
         twitter_client_mock = double('Twitter client')
         allow(twitter_client_mock).to receive(:update).and_raise('エラーが発生しました') # updateメソッドが呼ばれたらエラーを発生させる
-      
+
         weather_bot = WeatherBot.new
         allow(weather_bot).to receive(:twitter_client).and_return(twitter_client_mock)
-  
+
         # notifyメソッドが呼ばれることを検証する（allowではなく、expectだから、notifyが呼ばれなかったらエラーになる）
         expect(weather_bot).to receive(:notify)
-      
-        weather_bot.tweet_forecast # weather_botのnotifyメソッドが呼び出されたらテストはパスする 
+
+        weather_bot.tweet_forecast # weather_botのnotifyメソッドが呼び出されたらテストはパスする
       end
     end
 
@@ -331,14 +332,14 @@ RSpec.describe User do
           b.getCount()
         end
       end
-      
+
       class B
         def getCount()
           p "実行されちゃったよよよよよよよよよよよよよよよよよよ"
           rand()
         end
       end
-      
+
       context "モックを利用しない場合" do
         it "getCountが呼び出される" do
           a = A.new
@@ -351,7 +352,7 @@ RSpec.describe User do
           mock_b = double(B)
           allow(B).to receive(:new).and_return(mock_b) # B が newメソッド を受け取ることを許可し、mock_bを返す
           allow(mock_b).to receive(:getCount).and_return(0) # mock_b が getCountメソッド を受け取ることを許可し、0を返す
-    
+
           a = A.new
           expect(a.doSomething()).to eq 0 # a.doSomething()で、B.newをしているので、b = mock_bとなる。b.getCount()では、b(mock_b).getCount()となり、0を返す。
         end
@@ -360,14 +361,54 @@ RSpec.describe User do
       context "receive_message_chainを利用した場合" do
         it "getCountが呼び出される" do
           allow(B).to receive_message_chain(:new, :getCount).and_return(0) # B.new.getCount をモック化し、0を返すようにする
-      
+
           a = A.new
           expect(a.doSomething()).to eq 0
         end
       end
     end
   end
+
+  describe "ただの足し算でモックをつくって検証" do
+    class Calculator
+      def add(a, b)
+        a + b
+      end
+    end
+
+    describe '#add' do
+      it '3 + 5 = 8 であること（通常盤）' do
+        calculator = Calculator.new
+        expect(calculator.add(3, 5)).to eq(8)
+      end
+
+      it '3 + 5 = 8 であること（モック盤）' do
+        calculator = Calculator.new
+        allow(calculator).to receive(:add).and_return(8)
+        expect(calculator.add(30000, 50000)).to eq(8) # addの挙動がめっちゃ嘘だけどテストがパスする
+
+        expect(calculator).to have_received(:add).with(30000, 50000) # モックが呼び出されたかどうかを確認
+      end
+    end
+  end
+
+  describe "ダブルでモック作って検証kensyou" do
+    class SampleClass
+      def self.create_instance
+        new
+      end
+
+      def get_flag
+        "ソリューション部"
+      end
+    end
+
+    it "" do
+      # SampleClass に create_instance メソッドが来たら
+      allow(SampleClass).to receive(:create_instance).and_return(double(get_flag: "営業部"))
+
+      instance = SampleClass.create_instance
+      expect(instance.get_flag).to eq("営業部") # get_flagの挙動がめっちゃ嘘だけどテストがパスする
+    end
+  end
 end
-
-
-
